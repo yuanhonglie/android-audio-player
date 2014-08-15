@@ -13,7 +13,8 @@ LOCAL_SRC_FILES:= \
 	decoder.c \
 	layer12.c \
 	layer3.c \
-	huffman.c 
+	huffman.c \
+	NativeMP3Decoder.cpp
 	
 LOCAL_ARM_MODE := arm
 
@@ -26,4 +27,4 @@ LOCAL_CFLAGS := \
     -DHAVE_CONFIG_H \
     -DFPM_DEFAULT
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)

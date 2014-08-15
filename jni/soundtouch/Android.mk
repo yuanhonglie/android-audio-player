@@ -21,4 +21,4 @@ LOCAL_SRC_FILES := \
 	TDStretch.cpp
 
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
