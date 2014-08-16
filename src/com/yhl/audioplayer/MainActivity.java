@@ -1,5 +1,7 @@
 package com.yhl.audioplayer;
 
+import java.io.File;
+
 import com.yhl.task.Mp3DecodeThread;
 
 import android.os.Bundle;
@@ -11,7 +13,9 @@ import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity implements OnClickListener{
 	
-	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + "hotel.mp3";
+	private static final String TAG = MainActivity.class.getSimpleName();
+	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"hotel.mp3";
+//	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"inner.mp3";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

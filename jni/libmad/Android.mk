@@ -18,7 +18,7 @@ LOCAL_SRC_FILES:= \
 	
 LOCAL_ARM_MODE := arm
 
-LOCAL_MODULE:= libmad
+LOCAL_MODULE:= mad
 
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/android 
@@ -26,5 +26,7 @@ LOCAL_C_INCLUDES := \
 LOCAL_CFLAGS := \
     -DHAVE_CONFIG_H \
     -DFPM_DEFAULT
+
+LOCAL_LDLIBS :=-llog
 
 include $(BUILD_SHARED_LIBRARY)

@@ -18,7 +18,6 @@ public class Mp3DecodeThread extends Thread {
 	private short [] mBuffer = new short[BUFFER_SIZE];
 	private String outPath = Environment.getExternalStorageDirectory().getPath() + "/test.pcm";
 	
-	
 	public Mp3DecodeThread(String fileName) {
 		mHandle = Libmad.openFile(fileName);
 	}
@@ -33,27 +32,28 @@ public class Mp3DecodeThread extends Thread {
 			File pcmFile = new File(outPath);
 			FileOutputStream fos = new FileOutputStream(pcmFile);
 			bos = new BufferedOutputStream(fos);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		while ((size = Libmad.readSamplesInShortBuffer(mHandle, mBuffer, BUFFER_SIZE)) > 0) {
-			Log.i(TAG, "decoded size = " + size);
-			if (bos != null) {
-				byte [] buffer = shortArray2ByteArray(mBuffer, size);
-				try {
-					bos.write(buffer);
-				} catch (IOException e) {
-					e.printStackTrace();
+			Log.i(TAG, "run() 1");
+			while ((size = Libmad.readSamplesInShortBuffer(mHandle, mBuffer, BUFFER_SIZE)) > 0) {
+				Log.i(TAG, "run() size = " + size);
+				if (bos != null) {
+					byte [] buffer = shortArray2ByteArray(mBuffer, size);
+					try {
+						bos.write(buffer);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
-		}
-		
-		try {
-			bos.close();
-		} catch (IOException e) {
+			Log.i(TAG, "run() 2");
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				bos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

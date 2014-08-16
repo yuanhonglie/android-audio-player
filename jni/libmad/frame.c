@@ -26,7 +26,7 @@
 # include "global.h"
 
 # include <stdlib.h>
-
+# include "mad.h"
 # include "bit.h"
 # include "stream.h"
 # include "frame.h"
@@ -438,7 +438,6 @@ int mad_header_decode(struct mad_header *header, struct mad_stream *stream)
 int mad_frame_decode(struct mad_frame *frame, struct mad_stream *stream)
 {
   frame->options = stream->options;
-
   /* header() */
   /* error_check() */
 
@@ -456,22 +455,17 @@ int mad_frame_decode(struct mad_frame *frame, struct mad_stream *stream)
 
     goto fail;
   }
-
   /* ancillary_data() */
 
   if (frame->header.layer != MAD_LAYER_III) {
     struct mad_bitptr next_frame;
-
     mad_bit_init(&next_frame, stream->next_frame);
 
     stream->anc_ptr    = stream->ptr;
     stream->anc_bitlen = mad_bit_length(&stream->ptr, &next_frame);
-
     mad_bit_finish(&next_frame);
   }
-
   return 0;
-
  fail:
   stream->anc_bitlen = 0;
   return -1;

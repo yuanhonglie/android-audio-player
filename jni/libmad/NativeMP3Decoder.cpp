@@ -1,12 +1,15 @@
 #include "mad.h"
 #include <stdio.h>
 #include <string.h>
-#include "jni.h"
- 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define SHRT_MAX (32767)
 #define INPUT_BUFFER_SIZE	(5*8192)
 #define OUTPUT_BUFFER_SIZE	8192 /* Must be an integer multiple of 4. */
  
+
 /**
  * Struct holding the pointer to a wave file.
  */
@@ -112,11 +115,9 @@ static inline int readNextFrame( MP3FileHandle* mp3 )
 					return 0;
 				inputBufferSize = readBytes;
 			}
- 
 			mad_stream_buffer( &mp3->stream, mp3->inputBuffer, inputBufferSize );
 			mp3->stream.error = MAD_ERROR_NONE;
 		}
- 
 		if( mad_frame_decode( &mp3->frame, &mp3->stream ) )
 		{
 			if( mp3->stream.error == MAD_ERROR_BUFLEN ||(MAD_RECOVERABLE(mp3->stream.error)))
@@ -127,12 +128,10 @@ static inline int readNextFrame( MP3FileHandle* mp3 )
 		else
 			break;
 	} while( true );
- 
 	mad_timer_add( &mp3->timer, mp3->frame.header.duration );
 	mad_synth_frame( &mp3->synth, &mp3->frame );
 	mp3->leftSamples = mp3->synth.pcm.length;
 	mp3->offset = 0;
- 
 	return -1;
 }
 
@@ -162,7 +161,7 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInFloatBuffer(JNIEnv *
 		else
 		{
 			int result = readNextFrame( mp3 );
-			if( result == 0 )
+			if( result <= 0 )
 				return idx;
 		}
  
@@ -173,11 +172,10 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInFloatBuffer(JNIEnv *
 	return size;
 }
 
-JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *env, jobject obj, jint handle, jobject buffer, jint size)
+JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *env, jobject obj, jint handle, jshortArray buffer, jint size)
 {
 	MP3FileHandle* mp3 = handles[handle];
-	short* target = (short*)env->GetDirectBufferAddress(buffer);
- 
+	jshort *target = env->GetShortArrayElements(buffer, NULL);
 	int idx = 0;
 	while( idx != size )
 	{
@@ -192,7 +190,6 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *
 					value += fixedToShort(mp3->synth.pcm.samples[1][mp3->offset]);
 					value /= 2;
 				}
- 
 				target[idx++] = value;
 			}
 		}
@@ -200,13 +197,21 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *
 		{
 			int result = readNextFrame( mp3 );
 			if( result == 0 )
+			{
+				env->ReleaseShortArrayElements(buffer, target, 0);
 				return idx;
+			}
 		}
  
 	}
+
 	if( idx > size )
+	{
+		env->ReleaseShortArrayElements(buffer, target, 0);
 		return 0;
+	}
  
+	env->ReleaseShortArrayElements(buffer, target, 0);
 	return size;
 }
  
@@ -218,3 +223,7 @@ JNIEXPORT void JNICALL Java_com_yhl_jni_Libmad_closeFile(JNIEnv *env, jobject ob
 		handles[handle] = 0;
 	}
 }
+
+#ifdef __cplusplus
+}
+#endif
