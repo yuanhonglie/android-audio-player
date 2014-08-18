@@ -15,7 +15,6 @@ public class MainActivity extends Activity implements OnClickListener{
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"hotel.mp3";
-//	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"inner.mp3";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,7 +25,6 @@ public class MainActivity extends Activity implements OnClickListener{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}

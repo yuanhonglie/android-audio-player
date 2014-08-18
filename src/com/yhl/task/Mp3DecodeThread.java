@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ShortBuffer;
+
 import android.os.Environment;
 import android.util.Log;
 
@@ -32,9 +34,7 @@ public class Mp3DecodeThread extends Thread {
 			File pcmFile = new File(outPath);
 			FileOutputStream fos = new FileOutputStream(pcmFile);
 			bos = new BufferedOutputStream(fos);
-			Log.i(TAG, "run() 1");
 			while ((size = Libmad.readSamplesInShortBuffer(mHandle, mBuffer, BUFFER_SIZE)) > 0) {
-				Log.i(TAG, "run() size = " + size);
 				if (bos != null) {
 					byte [] buffer = shortArray2ByteArray(mBuffer, size);
 					try {
@@ -44,14 +44,12 @@ public class Mp3DecodeThread extends Thread {
 					}
 				}
 			}
-			Log.i(TAG, "run() 2");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				bos.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -77,8 +75,8 @@ public class Mp3DecodeThread extends Thread {
 			j = i + i;
 			num = shorts[i];
 			
-			bytes[j] = (byte)((num >> 8) & 0xff);
-			bytes[j+1] = (byte)(num & 0xff);
+			bytes[j] = (byte)(num & 0xff);
+			bytes[j+1] = (byte)((num >> 8) & 0xff);
 		}
 		
 		return bytes;

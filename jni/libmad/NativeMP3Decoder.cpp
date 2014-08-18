@@ -175,8 +175,15 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInFloatBuffer(JNIEnv *
 JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *env, jobject obj, jint handle, jshortArray buffer, jint size)
 {
 	MP3FileHandle* mp3 = handles[handle];
-	jshort *target = env->GetShortArrayElements(buffer, NULL);
+	short * target = (short*)env->GetShortArrayElements(buffer, NULL);
 	int idx = 0;
+	
+	/*
+	target[0] = 50;
+	target[1] = 1024;
+	size = 2;
+		*/
+	
 	while( idx != size )
 	{
 		if( mp3->leftSamples > 0 )
@@ -201,6 +208,7 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *
 				env->ReleaseShortArrayElements(buffer, target, 0);
 				return idx;
 			}
+			
 		}
  
 	}
@@ -210,7 +218,7 @@ JNIEXPORT jint JNICALL Java_com_yhl_jni_Libmad_readSamplesInShortBuffer(JNIEnv *
 		env->ReleaseShortArrayElements(buffer, target, 0);
 		return 0;
 	}
- 
+
 	env->ReleaseShortArrayElements(buffer, target, 0);
 	return size;
 }
