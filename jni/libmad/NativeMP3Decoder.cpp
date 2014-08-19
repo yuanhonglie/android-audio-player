@@ -232,6 +232,26 @@ JNIEXPORT void JNICALL Java_com_yhl_jni_Libmad_closeFile(JNIEnv *env, jobject ob
 	}
 }
 
+JNIEXPORT int JNICALL Java_com_yhl_jni_Libmad_getSampleRate(JNIEnv *env, jobject obj, jint handle)
+{
+	MP3FileHandle* mp3 = handles[handle];
+	return mp3->frame.header.samplerate;
+}
+
+JNIEXPORT long JNICALL Java_com_yhl_jni_Libmad_getDurationTime(JNIEnv *env, jobject obj, jint handle)
+{
+	MP3FileHandle* mp3 = handles[handle];
+	return mp3->frame.header.duration.seconds;
+}
+
+JNIEXPORT int JNICALL Java_com_yhl_jni_Libmad_getMode(JNIEnv *env, jobject obj, jint handle)
+{
+	MP3FileHandle* mp3 = handles[handle];
+	return mp3->frame.header.mode;
+}
+
+
+
 #ifdef __cplusplus
 }
 #endif
