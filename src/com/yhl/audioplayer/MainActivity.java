@@ -42,27 +42,27 @@ public class MainActivity extends Activity implements OnClickListener{
 //		int samplerate = Libmad.getAudioSamplerate();  
 //        System.out.println("samplerate = " + samplerate);  
 //        samplerate = samplerate / 2;  
-//        // ÉùÒôÎÄ¼þÒ»ÃëÖÓbufferµÄ´óÐ¡  
+//        // å£°éŸ³æ–‡ä»¶ä¸€ç§’é’Ÿbufferçš„å¤§å°  
 //        int mAudioMinBufSize = AudioTrack.getMinBufferSize(samplerate,  
 //                AudioFormat.CHANNEL_CONFIGURATION_STEREO,  
 //                AudioFormat.ENCODING_PCM_16BIT);  
 //  
-//        mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, // Ö¸¶¨ÔÚÁ÷µÄÀàÐÍ  
-//                // STREAM_ALARM£º¾¯¸æÉù  
-//                // STREAM_MUSCI£ºÒôÀÖÉù£¬ÀýÈçmusicµÈ  
-//                // STREAM_RING£ºÁåÉù  
-//                // STREAM_SYSTEM£ºÏµÍ³ÉùÒô  
-//                // STREAM_VOCIE_CALL£ºµç»°ÉùÒô  
+//        mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, // æŒ‡å®šåœ¨æµçš„ç±»åž‹  
+//                // STREAM_ALARMï¼šè­¦å‘Šå£°  
+//                // STREAM_MUSCIï¼šéŸ³ä¹å£°ï¼Œä¾‹å¦‚musicç­‰  
+//                // STREAM_RINGï¼šé“ƒå£°  
+//                // STREAM_SYSTEMï¼šç³»ç»Ÿå£°éŸ³  
+//                // STREAM_VOCIE_CALLï¼šç”µè¯å£°éŸ³  
 //                  
-//                samplerate,// ÉèÖÃÒôÆµÊý¾ÝµÄ²ÉÑùÂÊ  
-//                AudioFormat.CHANNEL_CONFIGURATION_STEREO,// ÉèÖÃÊä³öÉùµÀÎªË«ÉùµÀÁ¢ÌåÉù  
-//                AudioFormat.ENCODING_PCM_16BIT,// ÉèÖÃÒôÆµÊý¾Ý¿éÊÇ8Î»»¹ÊÇ16Î»  
-//                mAudioMinBufSize, AudioTrack.MODE_STREAM);// ÉèÖÃÄ£Ê½ÀàÐÍ£¬ÔÚÕâÀïÉèÖÃÎªÁ÷ÀàÐÍ  
-//        // AudioTrackÖÐÓÐMODE_STATICºÍMODE_STREAMÁ½ÖÖ·ÖÀà¡£  
-//        // STREAM·½Ê½±íÊ¾ÓÉÓÃ»§Í¨¹ýwrite·½Ê½°ÑÊý¾ÝÒ»´ÎÒ»´ÎµÃÐ´µ½audiotrackÖÐ¡£  
-//        // ÕâÖÖ·½Ê½µÄÈ±µã¾ÍÊÇJAVA²ãºÍNative²ã²»¶ÏµØ½»»»Êý¾Ý£¬Ð§ÂÊËðÊ§½Ï´ó¡£  
-//        // ¶øSTATIC·½Ê½±íÊ¾ÊÇÒ»¿ªÊ¼´´½¨µÄÊ±ºò£¬¾Í°ÑÒôÆµÊý¾Ý·Åµ½Ò»¸ö¹Ì¶¨µÄbuffer£¬È»ºóÖ±½Ó´«¸øaudiotrack£¬  
-//        // ºóÐø¾Í²»ÓÃÒ»´Î´ÎµÃwriteÁË¡£AudioTrack»á×Ô¼º²¥·ÅÕâ¸öbufferÖÐµÄÊý¾Ý¡£  
-//        // ÕâÖÖ·½·¨¶ÔÓÚÁåÉùµÈÌå»ý½ÏÐ¡µÄÎÄ¼þ±È½ÏºÏÊÊ¡£  
+//                samplerate,// è®¾ç½®éŸ³é¢‘æ•°æ®çš„é‡‡æ ·çŽ‡  
+//                AudioFormat.CHANNEL_CONFIGURATION_STEREO,// è®¾ç½®è¾“å‡ºå£°é“ä¸ºåŒå£°é“ç«‹ä½“å£°  
+//                AudioFormat.ENCODING_PCM_16BIT,// è®¾ç½®éŸ³é¢‘æ•°æ®å—æ˜¯8ä½è¿˜æ˜¯16ä½  
+//                mAudioMinBufSize, AudioTrack.MODE_STREAM);// è®¾ç½®æ¨¡å¼ç±»åž‹ï¼Œåœ¨è¿™é‡Œè®¾ç½®ä¸ºæµç±»åž‹  
+//        // AudioTrackä¸­æœ‰MODE_STATICå’ŒMODE_STREAMä¸¤ç§åˆ†ç±»ã€‚  
+//        // STREAMæ–¹å¼è¡¨ç¤ºç”±ç”¨æˆ·é€šè¿‡writeæ–¹å¼æŠŠæ•°æ®ä¸€æ¬¡ä¸€æ¬¡å¾—å†™åˆ°audiotrackä¸­ã€‚  
+//        // è¿™ç§æ–¹å¼çš„ç¼ºç‚¹å°±æ˜¯JAVAå±‚å’ŒNativeå±‚ä¸æ–­åœ°äº¤æ¢æ•°æ®ï¼Œæ•ˆçŽ‡æŸå¤±è¾ƒå¤§ã€‚  
+//        // è€ŒSTATICæ–¹å¼è¡¨ç¤ºæ˜¯ä¸€å¼€å§‹åˆ›å»ºçš„æ—¶å€™ï¼Œå°±æŠŠéŸ³é¢‘æ•°æ®æ”¾åˆ°ä¸€ä¸ªå›ºå®šçš„bufferï¼Œç„¶åŽç›´æŽ¥ä¼ ç»™audiotrackï¼Œ  
+//        // åŽç»­å°±ä¸ç”¨ä¸€æ¬¡æ¬¡å¾—writeäº†ã€‚AudioTrackä¼šè‡ªå·±æ’­æ”¾è¿™ä¸ªbufferä¸­çš„æ•°æ®ã€‚  
+//        // è¿™ç§æ–¹æ³•å¯¹äºŽé“ƒå£°ç­‰ä½“ç§¯è¾ƒå°çš„æ–‡ä»¶æ¯”è¾ƒåˆé€‚ã€‚  
 //    } 
 }
