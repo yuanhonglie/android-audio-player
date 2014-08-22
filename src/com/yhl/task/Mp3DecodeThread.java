@@ -37,18 +37,19 @@ public class Mp3DecodeThread extends Thread {
 				mInfo.mode = Libmad.getMode(mHandle);
 				Log.i(TAG, "Mp3Info = " + mInfo);
 				inited = true;
-				int bufferSizeInBytes = AudioTrack.getMinBufferSize(mInfo.sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+				int format = Libmad.channelMode2AudioFormat(mInfo.mode);
+				int encoding = AudioFormat.ENCODING_PCM_16BIT;
+				int bufferSizeInBytes = AudioTrack.getMinBufferSize(mInfo.sampleRate, format, encoding);
 				mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, mInfo.sampleRate,
-						AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSizeInBytes*4, AudioTrack.MODE_STREAM);
+						format, encoding, bufferSizeInBytes*4, AudioTrack.MODE_STREAM);
 				mAudioTrack.play();
 			}
 			
 			writeBuffer(mBuffer, size);
 			
 			try {
-				sleep(20);
+				sleep(50);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -56,12 +57,9 @@ public class Mp3DecodeThread extends Thread {
 
 	
 	public void audioPlay() {
-		Log.i(TAG, "audioPlay 1");
 		if (mAudioTrack != null) {
-			Log.i(TAG, "audioPlay 2");
 			mAudioTrack.play();
 		}
-		Log.i(TAG, "audioPlay 3");
 	}
 	
 	public void audioPause() {
@@ -89,30 +87,4 @@ public class Mp3DecodeThread extends Thread {
 		}
 	}
 	
-	private byte [] shortArray2ByteArray(short [] shorts, int len) {
-		
-		if (shorts == null || shorts.length == 0) {
-			return null;
-		}
-		
-		int size = shorts.length;
-		
-		int j = size;
-		short num = 0;
-
-		len = Math.min(len, size);
-		
-		byte [] bytes = new byte[len+len];
-		
-		for (int i = 0; i < len; i++) {
-			
-			j = i + i;
-			num = shorts[i];
-			
-			bytes[j] = (byte)(num & 0xff);
-			bytes[j+1] = (byte)((num >> 8) & 0xff);
-		}
-		
-		return bytes;
-	}
 }
