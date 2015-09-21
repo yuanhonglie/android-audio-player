@@ -18,7 +18,9 @@ LOCAL_SRC_FILES := \
 	RateTransposer.cpp \
 	SoundTouch.cpp \
 	sse_optimized.cpp \
-	TDStretch.cpp
+	TDStretch.cpp \
+	android/soundtouch_wapper.cpp
+	
 
 
 include $(BUILD_SHARED_LIBRARY)
