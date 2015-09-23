@@ -1,9 +1,10 @@
 package com.yhl.jni;
 
 import android.media.AudioFormat;
+import android.util.Log;
 
 public class Libmad {
-	
+	private static final String TAG = "Libmad";
 	static{
 		System.loadLibrary("mad");
 	}
@@ -47,6 +48,7 @@ public class Libmad {
 	}
 	
 	public static int channelMode2AudioFormat(int mode) {
+		Log.i(TAG, "channelMode2AudioFormat mode = " + mode);
 		int format = AudioFormat.CHANNEL_OUT_MONO;
 		switch (mode) {
 		case ChannelMode.MAD_MODE_SINGLE_CHANNEL:

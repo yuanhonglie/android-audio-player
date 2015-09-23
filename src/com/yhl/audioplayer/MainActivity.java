@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.yhl.data.Song;
-import com.yhl.task.Mp3DecodeThread;
+import com.yhl.task.AuidoPlayThread;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,6 +29,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"hotel.mp3";
 	private SongAdapter mAdapter;
+	AuidoPlayThread mAudioPlayer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -143,8 +144,19 @@ public class MainActivity extends Activity implements OnClickListener{
 				@Override
 				public void onClick(View v) {
 					Song song = (Song)v.getTag();
-					Log.i(TAG, "song = " + song);
-					playSong(song);
+					if (mAudioPlayer == null) {
+						Log.i(TAG, "song = " + song);
+						playSong(song);
+						((Button)v).setText(R.string.pause);
+					} else if (mAudioPlayer.isPaused()) {
+						Log.i(TAG, "handle audio play");
+						mAudioPlayer.audioPlay();
+						((Button)v).setText(R.string.pause);
+					} else if (mAudioPlayer.isPlaying()) {
+						Log.i(TAG, "handle audio pause");
+						mAudioPlayer.audioPause();
+						((Button)v).setText(R.string.play);
+					}
 				}
 			});
 			mHolder.btnPlay.setTag(song);
@@ -162,7 +174,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	
 	
 	private void playSong(Song song) {
-		Mp3DecodeThread thread = new Mp3DecodeThread(song.getUrl());
-		thread.start();
+		mAudioPlayer = new AuidoPlayThread(song.getUrl());
+		mAudioPlayer.start();
 	}
 }
