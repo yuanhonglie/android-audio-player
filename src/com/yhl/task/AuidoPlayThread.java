@@ -29,10 +29,6 @@ public class AuidoPlayThread extends Thread {
 	public synchronized void run() {
 		super.run();
 		
-		mInfo.sampleRate = Libmad.getSampleRate(mHandle);
-		mInfo.durationTime = Libmad.getDurationTime(mHandle);
-		mInfo.mode = Libmad.getMode(mHandle);
-		Log.i(TAG, "Mp3Info1 = " + mInfo);
 		int size = 0;
 		while ((size = Libmad.readSamplesInShortBuffer(mHandle, mBuffer,
 				BUFFER_SIZE_SHORT)) > 0) {
@@ -43,12 +39,9 @@ public class AuidoPlayThread extends Thread {
 				Log.i(TAG, "Mp3Info = " + mInfo);
 				initSoundTouch(mInfo.sampleRate, 1);
 				inited = true;
-				int format = Libmad.channelMode2AudioFormat(mInfo.mode);
 				int encoding = AudioFormat.ENCODING_PCM_16BIT;
-				int bufferSizeInBytes = AudioTrack.getMinBufferSize(mInfo.sampleRate, format, encoding);
-				mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, mInfo.sampleRate,
-						format, encoding, bufferSizeInBytes*4, AudioTrack.MODE_STREAM);
-//				mAudioTrack.play();
+				int bufferSizeInBytes = AudioTrack.getMinBufferSize(mInfo.sampleRate, AudioFormat.CHANNEL_OUT_MONO, encoding);
+				mAudioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, mInfo.sampleRate, AudioFormat.CHANNEL_OUT_MONO, encoding, bufferSizeInBytes*4, AudioTrack.MODE_STREAM);
 			}
 			
 			
