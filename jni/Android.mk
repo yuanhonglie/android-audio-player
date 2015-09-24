@@ -25,7 +25,6 @@ LOCAL_SRC_FILES:= \
 	soundtouch/SoundTouch.cpp \
 	soundtouch/sse_optimized.cpp \
 	soundtouch/TDStretch.cpp \
-	soundtouch/android/soundtouch_wapper.cpp \
 	MP3Decoder.cpp
 	
 LOCAL_ARM_MODE := arm
