@@ -1,53 +1,39 @@
 package com.yhl.task;
 
-import com.yhl.jni.Libmad;
-import com.yhl.jni.Libmad.Mp3Info;
-import com.yhl.jni.SoundTouch;
+import com.yhl.jni.Mp3Decoder;
+import com.yhl.task.AudioPlayer.Mp3Info;
 import com.yhl.task.AudioPlayer.Options;
 
 public class AudioBuffer {
-	private int mMadHandle = -1;
-	private int mStHandle = -1;
+	private int mHandler = -1;
 	
 	public AudioBuffer(String filePath) {
-		mMadHandle = Libmad.openFile(filePath);
-		//TODO create soundtouch instance
-//		mStHandle = SoundTouch.create();
-		//TODO get mp3 sample rate, init soundtouch;
+		mHandler = Mp3Decoder.openFile(filePath);
 	}
 	
 	public Mp3Info getMp3Info() {
 		Mp3Info info = new Mp3Info();
-		info.sampleRate = Libmad.getSampleRate(mMadHandle);
-		info.durationTime = Libmad.getDurationTime(mMadHandle);
-		info.mode = Libmad.getMode(mMadHandle);
+		info.sampleRate = Mp3Decoder.getSampleRate(mHandler);
+		info.mode = Mp3Decoder.getMode(mHandler);
 		return info;
 	}
 	
-	public int readPcmBuffer(short [] buffer, int size) {
-		return Libmad.readSamplesInShortBuffer(mMadHandle, buffer,size);
-	}
-	
 	public void setTransformOption(Options options) {
-		SoundTouch.setTempoChange(options.tempoChange);
-		SoundTouch.setPitchSemiTones(options.pitchTones);
-		SoundTouch.setRateChange(options.rateChange);
+		Mp3Decoder.setSoundTouchOptions(mHandler, options.newTempo, options.pitch, options.newRate);
 	}
 	
-	public void putPcmBuffer(short [] buffer, int size) {
-		SoundTouch.putSamples(buffer, size);
+	public int prepareBufferInShort(int size) {
+		return Mp3Decoder.prepareBufferInShort(mHandler, size);
 	}
 	
-	public short[] receiveSamples() {
-		return SoundTouch.receiveSamples();
+	public short[] readSamples() {
+		return Mp3Decoder.readSamples(mHandler);
 	}
 	
 	public void release() {
-		if (mMadHandle != -1) {
-			Libmad.closeFile(mMadHandle);
-			mMadHandle = -1;
+		if (mHandler != -1) {
+			Mp3Decoder.closeFile(mHandler);
+			mHandler = -1;
 		}
-		//TODO release soundtouch instance;
-		
 	}
 }
