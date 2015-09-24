@@ -14,11 +14,10 @@ public class AudioBuffer {
 	public Mp3Info getMp3Info() {
 		Mp3Info info = new Mp3Info();
 		info.sampleRate = Mp3Decoder.getSampleRate(mHandler);
-		info.mode = Mp3Decoder.getMode(mHandler);
 		return info;
 	}
 	
-	public void setTransformOption(Options options) {
+	public void setSoundTouchOptions(Options options) {
 		Mp3Decoder.setSoundTouchOptions(mHandler, options.newTempo, options.pitch, options.newRate);
 	}
 	

@@ -4,15 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yhl.data.Song;
-import com.yhl.task.AuidoPlayThread;
-
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,25 +19,67 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnClickListener{
+import com.yhl.data.Song;
+import com.yhl.task.AudioPlayer;
+import com.yhl.task.AudioPlayer.Options;
+
+public class MainActivity extends Activity implements OnClickListener, OnSeekBarChangeListener{
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"hotel.mp3";
 	private SongAdapter mAdapter;
-	AuidoPlayThread mAudioPlayer;
+	private AudioPlayer mAudioPlayer;
+	private SeekBar sbTempo, sbPitch, sbRate;
+	private TextView tvTempo, tvPitch, tvRate;
+	private float tempo, rate;
+	private int pitch;
+	private Options options;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		initView();
+	}
+
+	private void initView() {
+		tvTempo = (TextView)findViewById(R.id.tv_tempo);
+		tvPitch = (TextView)findViewById(R.id.tv_pitch);
+		tvRate = (TextView)findViewById(R.id.tv_rate);
+
+		sbTempo = (SeekBar)findViewById(R.id.sb_tempo);
+		sbTempo.setOnSeekBarChangeListener(this);
+		sbTempo.setMax(100);
+		sbTempo.setProgress(50);
+		
+		sbPitch = (SeekBar)findViewById(R.id.sb_pitch);
+		sbPitch.setOnSeekBarChangeListener(this);
+		sbPitch.setMax(100);
+		sbPitch.setProgress(50);
+		
+		sbRate = (SeekBar)findViewById(R.id.sb_rate);
+		sbRate.setOnSeekBarChangeListener(this);
+		sbRate.setMax(100);
+		sbRate.setProgress(50);
+		
 		List<Song> songs = scanSongs();
 		ListView listView = (ListView)findViewById(R.id.lv_songs);
 		mAdapter = new SongAdapter(this, songs);
 		listView.setAdapter(mAdapter);
+		
+		mAudioPlayer = new AudioPlayer(options);
 	}
 
+	private void showOptions(Options options) {
+		tvTempo.setText(""+options.newTempo);
+		tvPitch.setText(""+options.pitch);
+		tvRate.setText(""+options.newRate);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -49,6 +88,35 @@ public class MainActivity extends Activity implements OnClickListener{
 
 	@Override
 	public void onClick(View v) {
+		
+	}
+	
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		if (seekBar == sbTempo) {
+			tempo = progress-50;
+		} else if (seekBar == sbPitch) {
+			pitch = (progress*24)/100 - 12;
+		} else if (seekBar == sbRate) {
+			rate = progress-50;
+		}
+		
+		options = new Options(tempo, pitch, rate);
+		showOptions(options);
+		if (mAudioPlayer != null) {
+			mAudioPlayer.setOptions(options);
+		}
+		
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
 		
 	}
 	
@@ -96,6 +164,26 @@ public class MainActivity extends Activity implements OnClickListener{
 		return songs;
 	}
 
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	}
+	
+	@Override
+	public void finish() {
+		super.finish();
+		if (mAudioPlayer != null) {
+			mAudioPlayer.release();
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finish();
+	}
+	
 	public class SongAdapter extends BaseAdapter {
 
 		private List<Song> mSongs;
@@ -144,18 +232,16 @@ public class MainActivity extends Activity implements OnClickListener{
 				@Override
 				public void onClick(View v) {
 					Song song = (Song)v.getTag();
-					if (mAudioPlayer == null) {
-						Log.i(TAG, "song = " + song);
-						playSong(song);
-						((Button)v).setText(R.string.pause);
-					} else if (mAudioPlayer.isPaused()) {
-						Log.i(TAG, "handle audio play");
-						mAudioPlayer.audioPlay();
+					
+					if (mAudioPlayer.isPaused()) {
+						mAudioPlayer.play();
 						((Button)v).setText(R.string.pause);
 					} else if (mAudioPlayer.isPlaying()) {
-						Log.i(TAG, "handle audio pause");
-						mAudioPlayer.audioPause();
+						mAudioPlayer.pause();
 						((Button)v).setText(R.string.play);
+					} else {
+						playSong(song);
+						((Button)v).setText(R.string.pause);
 					}
 				}
 			});
@@ -174,7 +260,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	
 	
 	private void playSong(Song song) {
-		mAudioPlayer = new AuidoPlayThread(song.getUrl());
-		mAudioPlayer.start();
+		mAudioPlayer.setData(song.getUrl());
+		mAudioPlayer.play();
 	}
 }
