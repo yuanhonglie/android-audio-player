@@ -1,22 +1,37 @@
-package com.yhl.task;
+package com.yhl.audioplayer;
 
-public class AudioPlayer implements IAudioPlayer{
+import android.os.Handler;
+import android.util.Log;
 
+public class AudioPlayer implements IAudioPlayer, IAudioListener{
+	private static final String TAG = "AudioPlayer";
 	private AudioPlayThread player;
 	private Options mOptions;
+	private IAudioListener mListener;
+	private Object mTag;
+	private Handler mHandler;
 	
 	public AudioPlayer() {
 		mOptions = new Options();
+		try {
+			mHandler = new Handler();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public AudioPlayer(Options options) {
 		mOptions = options;
+		try {
+			mHandler = new Handler();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void setData(String path) {
 		if (player != null) {
-			//TODO do recycle
 			if (player.isAlive()) {
 				player.audioStop();
 			} else {
@@ -24,6 +39,7 @@ public class AudioPlayer implements IAudioPlayer{
 			}
 		}
 		player = new AudioPlayThread(path, mOptions);
+		player.setAudioListener(this);
 	}
 
 	@Override
@@ -32,6 +48,21 @@ public class AudioPlayer implements IAudioPlayer{
 		if (player != null) {
 			player.setOptions(options);
 		}
+	}
+	
+	@Override
+	public void setAudioListener(IAudioListener listener) {
+		mListener = listener;
+	}
+	
+	@Override
+	public void setTag(Object obj) {
+		mTag = obj;
+	}
+
+	@Override
+	public Object getTag() {
+		return mTag;
 	}
 	
 	@Override
@@ -77,7 +108,6 @@ public class AudioPlayer implements IAudioPlayer{
 
 	@Override
 	public int getPlayState() {
-		// TODO Auto-generated method stub
 		if (player != null && player.isAlive()) {
 			return player.getPlayState();
 		}
@@ -86,7 +116,6 @@ public class AudioPlayer implements IAudioPlayer{
 
 	@Override
 	public boolean isPlaying() {
-		// TODO Auto-generated method stub
 		if (player != null && player.isAlive()) {
 			return player.isPlaying();
 		}
@@ -95,7 +124,6 @@ public class AudioPlayer implements IAudioPlayer{
 
 	@Override
 	public boolean isPaused() {
-		// TODO Auto-generated method stub
 		if (player != null && player.isAlive()) {
 			return player.isPaused();
 		}
@@ -130,6 +158,61 @@ public class AudioPlayer implements IAudioPlayer{
 			StringBuilder sb = new StringBuilder();
 			sb.append("sampleRate = ").append(sampleRate).append("|");
 			return sb.toString();
+		}
+	}
+
+	@Override
+	public void onPlay(AudioPlayer ap) {
+		Log.i(TAG, "onPlay-->");
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				if (mListener != null) {
+					mListener.onPlay(AudioPlayer.this);
+				}
+			}
+		};
+		if (mHandler == null) {
+			r.run();
+		} else {
+			mHandler.post(r);
+		}
+	}
+
+	@Override
+	public void onPause(AudioPlayer ap) {
+		Log.i(TAG, "onPause-->");
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				if (mListener != null) {
+					mListener.onPause(AudioPlayer.this);
+				}
+			}
+		};
+		if (mHandler == null) {
+			r.run();
+		} else {
+			mHandler.post(r);
+		}
+	}
+
+	@Override
+	public void onCompletion(AudioPlayer ap) {
+		Log.i(TAG, "onCompletion-->");
+		Runnable r = new Runnable() {
+			@Override
+			public void run() {
+				if (mListener != null) {
+					mListener.onCompletion(AudioPlayer.this);
+				}
+				mTag = null;
+			}
+		};
+		if (mHandler == null) {
+			r.run();
+		} else {
+			mHandler.post(r);
 		}
 	}
 }

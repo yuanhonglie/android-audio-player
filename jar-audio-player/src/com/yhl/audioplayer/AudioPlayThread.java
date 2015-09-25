@@ -1,12 +1,12 @@
-package com.yhl.task;
+package com.yhl.audioplayer;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
 
-import com.yhl.task.AudioPlayer.Mp3Info;
-import com.yhl.task.AudioPlayer.Options;
+import com.yhl.audioplayer.AudioPlayer.Mp3Info;
+import com.yhl.audioplayer.AudioPlayer.Options;
 
 public class AudioPlayThread extends Thread {
 	
@@ -14,6 +14,7 @@ public class AudioPlayThread extends Thread {
 	private static final int BUFFER_SIZE_SHORT = 4096;
 	private AudioBuffer mAudioBuffer;
 	private AudioTrack mAudioTrack;
+	private IAudioListener mListener;
 	
 	public AudioPlayThread(String fileName) {
 		this(fileName, null);
@@ -33,22 +34,27 @@ public class AudioPlayThread extends Thread {
 	@Override
 	public synchronized void run() {
 		super.run();
+		onPlay();
 		try {
 			while (mAudioBuffer.prepareBufferInShort(BUFFER_SIZE_SHORT) > 0) {
 				createAudioTrackIfNeed();
 				handleAudioCtrl();
 				short[] buffer = null;
-
+//				Log.i(TAG, "run() ---> 1");
+				
 				do {
 					buffer = mAudioBuffer.readSamples();
+//					Log.i(TAG, "run() ---> buffer = " + buffer.length);
 					writeBuffer(buffer, buffer.length);
 				} while (buffer != null && buffer.length > 0);
+//				Log.i(TAG, "run() ---> 2");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			Log.i(TAG, "finally call release");
 			audioRelease();
+			onCompletion();
 		}
 	}
 	
@@ -79,11 +85,13 @@ public class AudioPlayThread extends Thread {
 		if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_STOPPED) {
 			throw new RuntimeException("stop audio player");
 		} else if (mAudioTrack.getPlayState() == AudioTrack.PLAYSTATE_PAUSED) {
+			onPause();
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			onPlay();
 		}
 	}
 	
@@ -147,4 +155,27 @@ public class AudioPlayThread extends Thread {
 		}
 		return 0;
 	}
+
+	public void setAudioListener(IAudioListener listener) {
+		mListener = listener;
+	}
+	
+	private void onPlay() {
+		if (mListener != null) {
+			mListener.onPlay(null);
+		}
+	}
+	
+	private void onPause() {
+		if (mListener != null) {
+			mListener.onPause(null);
+		}
+	}
+	
+	private void onCompletion() {
+		if (mListener != null) {
+			mListener.onCompletion(null);
+		}
+	}
+	
 }

@@ -1,14 +1,16 @@
-package com.yhl.audioplayer;
+package com.yhl.audioplayer.demo;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.yhl.audioplayer.AudioPlayer;
+import com.yhl.audioplayer.AudioPlayer.Options;
+import com.yhl.audioplayer.IAudioListener;
 
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,14 +25,10 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.yhl.data.Song;
-import com.yhl.task.AudioPlayer;
-import com.yhl.task.AudioPlayer.Options;
 
-public class MainActivity extends Activity implements OnClickListener, OnSeekBarChangeListener{
+public class MainActivity extends Activity implements OnClickListener, OnSeekBarChangeListener, IAudioListener {
 	
 	private static final String TAG = MainActivity.class.getSimpleName();
-	private String mp3FilePath = Environment.getExternalStorageDirectory().getPath() + File.separator +"hotel.mp3";
 	private SongAdapter mAdapter;
 	private AudioPlayer mAudioPlayer;
 	private SeekBar sbTempo, sbPitch, sbRate;
@@ -38,6 +36,7 @@ public class MainActivity extends Activity implements OnClickListener, OnSeekBar
 	private float tempo, rate;
 	private int pitch;
 	private Options options;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,6 +71,7 @@ public class MainActivity extends Activity implements OnClickListener, OnSeekBar
 		listView.setAdapter(mAdapter);
 		
 		mAudioPlayer = new AudioPlayer(options);
+		mAudioPlayer.setAudioListener(this);
 	}
 
 	private void showOptions(Options options) {
@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements OnClickListener, OnSeekBar
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		if (seekBar == sbTempo) {
-			tempo = progress-50;
+			tempo = (progress*70)/100-35;
 		} else if (seekBar == sbPitch) {
 			pitch = (progress*24)/100 - 12;
 		} else if (seekBar == sbRate) {
@@ -233,15 +233,17 @@ public class MainActivity extends Activity implements OnClickListener, OnSeekBar
 				public void onClick(View v) {
 					Song song = (Song)v.getTag();
 					
-					if (mAudioPlayer.isPaused()) {
-						mAudioPlayer.play();
-						((Button)v).setText(R.string.pause);
-					} else if (mAudioPlayer.isPlaying()) {
-						mAudioPlayer.pause();
-						((Button)v).setText(R.string.play);
+					if (v.equals(mAudioPlayer.getTag())) {
+						if (mAudioPlayer.isPaused()) {
+							mAudioPlayer.play();
+						} else if (mAudioPlayer.isPlaying()){
+							mAudioPlayer.pause();
+						} else {
+							mAudioPlayer.stop();
+						}
 					} else {
 						playSong(song);
-						((Button)v).setText(R.string.pause);
+						mAudioPlayer.setTag(v);
 					}
 				}
 			});
@@ -262,5 +264,32 @@ public class MainActivity extends Activity implements OnClickListener, OnSeekBar
 	private void playSong(Song song) {
 		mAudioPlayer.setData(song.getUrl());
 		mAudioPlayer.play();
+	}
+
+	@Override
+	public void onPlay(AudioPlayer ap) {
+		Button view = (Button)ap.getTag();
+		if (view != null) {
+			view.setText(R.string.pause);
+		}
+	}
+
+	@Override
+	public void onPause(AudioPlayer ap) {
+		// TODO Auto-generated method stub
+		Button view = (Button)ap.getTag();
+		if (view != null) {
+			view.setText(R.string.play);
+		}
+		
+	}
+
+	@Override
+	public void onCompletion(AudioPlayer ap) {
+		// TODO Auto-generated method stub
+		Button view = (Button)ap.getTag();
+		if (view != null) {
+			view.setText(R.string.play);
+		}
 	}
 }

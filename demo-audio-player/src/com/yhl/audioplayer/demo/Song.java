@@ -1,4 +1,4 @@
-package com.yhl.data;
+package com.yhl.audioplayer.demo;
 
 public class Song {
 

@@ -1,10 +1,13 @@
-package com.yhl.task;
+package com.yhl.audioplayer;
 
-import com.yhl.task.AudioPlayer.Options;
+import com.yhl.audioplayer.AudioPlayer.Options;
 
 public interface IAudioPlayer {
 	void setData(String path);
 	void setOptions(Options options);
+	void setAudioListener(IAudioListener listener);
+	void setTag(Object obj);
+	Object getTag();
 	Options getOptions();
 	void play();
 	void pause();

@@ -1,0 +1,92 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+	    <TextView 
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="变速"
+        	/>
+        <TextView 
+            android:id="@+id/tv_tempo"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_marginLeft="10dp"
+        	android:text="0"
+        	/>
+    </LinearLayout>
+    
+    <SeekBar 
+       	android:id="@+id/sb_tempo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    
+	<LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+	    <TextView 
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="变调"
+        	/>
+        <TextView 
+            android:id="@+id/tv_pitch"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_marginLeft="10dp"
+        	android:text="0"
+        	/>
+    </LinearLayout>
+    
+    <SeekBar 
+       	android:id="@+id/sb_pitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    
+	<LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+	    <TextView 
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="变音调"
+        	/>
+        <TextView 
+            android:id="@+id/tv_rate"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_marginLeft="10dp"
+        	android:text="0"
+        	/>
+    </LinearLayout>
+    
+	<SeekBar 
+       	android:id="@+id/sb_rate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    
+    
+    <ListView
+        android:id="@+id/lv_songs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

@@ -1,8 +1,8 @@
-package com.yhl.task;
+package com.yhl.audioplayer;
 
+import com.yhl.audioplayer.AudioPlayer.Mp3Info;
+import com.yhl.audioplayer.AudioPlayer.Options;
 import com.yhl.jni.Mp3Decoder;
-import com.yhl.task.AudioPlayer.Mp3Info;
-import com.yhl.task.AudioPlayer.Options;
 
 public class AudioBuffer {
 	private int mHandler = -1;
